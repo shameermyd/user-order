@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './schema/order.schema';
@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
     private httpService: HttpService,
@@ -20,6 +21,7 @@ export class OrdersService {
         this.httpService.get(`http://localhost:3000/users/${userId}`)
       );
 
+      this.logger.log(`User response: ${JSON.stringify(userResponse)}`);
       const user = userResponse.data;
 
       const order = new this.orderModel({ userId, product, price });
